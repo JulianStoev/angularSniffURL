@@ -72,6 +72,6 @@ https://example.com/path/folder/?sort=2&orderby=1#asc
 }
 ```
 ### Note
-1. Call sniffUrl.start() to start listening for router changes.
+1. Call sniffUrl.start() once somewhere in your app to start listening for router changes.
 2. Upon subscribing to obs$ you will immediately receive the last event. In case there is no previous event it will return null so you need to check for it.
 2. If you subscripe to newObs$ it will start listening from now on and will emit on the next event.

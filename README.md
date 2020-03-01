@@ -12,7 +12,7 @@ active subscription to the router, and you can change how it works throughout th
 The usual usage is to just enable it in your App compoennt on init so you can use it in every component at all times.
 
 ```
-import { sniffUrlService } from '@services/sniffurl.service';
+import { sniffUrlService } from 'sniffurl.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 
 export class MyComponent {

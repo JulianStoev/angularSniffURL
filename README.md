@@ -6,11 +6,6 @@ active subscription to the router, and you can change how it works throughout th
 
 ### Example usage
 
-1. Before you can subscribe for changes, you need to start listening for events, by calling sniffUrl.start();
-2. If you think your app won't need to listen anymore for URL changes, you can stop listneing with sniffUrl.stop();
-3. You don't need to start/stop the listener on each component unless you need it for specific situations only.
-The usual usage is to just enable it in your App compoennt on init so you can use it in every component at all times.
-
 ```
 import { sniffUrlService } from 'sniffurl.service';
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -18,26 +13,24 @@ import { Subscription } from 'rxjs/internal/Subscription';
 export class MyComponent {
   
   constructor(
-    public content: sniffUrlService
+    private sniffUrl: sniffUrlService
   ) { }
-  
-  private urlSubs:Subscription;
-  
+
+  private urlSubscription:Subscription;
+
   ngOnInit() {
-    this.sniffUrl.start();
-    this.urlSubs = this.tools.sniffUrl.obs$.subscribe(e => {
-      if (e) {
-        // console.log(e);
-        // there was a change with the URL
-        // your code here        
-      }
+    this.urlSubscription = this.sniffUrl.obs$.subscribe(e => {
+      if (!e) return;
+      console.log(e);
+      // your code here
     });
   }
-  
+
   ngOnDestroy() {
-    if (this.urlSubs) {
-      this.urlSubs.unsubscripbe();
+    if (this.urlSubscription) {
+      this.urlSubscription.unsubscripbe();
     }
+    // if you don't need the sniffer anymore
     this.sniffUrl.stop();
   }
 
@@ -72,6 +65,5 @@ https://example.com/path/folder/?sort=2&orderby=1#asc
 }
 ```
 ### Note
-1. Call sniffUrl.start() once somewhere in your app to start listening for router changes.
-2. Upon subscribing to obs$ you will immediately receive the last event. In case there is no previous event it will return null so you need to check for it.
+1. Upon subscribing to obs$ you will immediately receive the last event. In case there is no previous event it will return null so you need to check for it.
 2. If you subscripe to newObs$ it will start listening from now on and will emit on the next event.

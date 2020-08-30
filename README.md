@@ -7,10 +7,11 @@ active subscription to the router, and you can change how it works throughout th
 ### Example usage
 
 ```
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { sniffUrlService } from 'sniffurl.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 
-export class MyComponent {
+export class MyComponent implements OnInit, OnDestroy {
   
   constructor(
     private sniffUrl: sniffUrlService

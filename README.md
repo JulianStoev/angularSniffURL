@@ -59,7 +59,7 @@ https://example.com/path/folder/?sort=2&orderby=1#asc
   segments: ['path', 'folder'],
   queryParams: {
     sort: '2',
-    orderBy: '1'
+    orderby: '1'
   },
   fragment: 'asc'
 }

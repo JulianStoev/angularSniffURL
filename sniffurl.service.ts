@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router, NavigationEnd, UrlTree, UrlSegment } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Subject } from 'rxjs/internal/Subject';
@@ -26,29 +26,16 @@ export class SniffurlService {
   private subscription: Subscription;
 
   // will emit immediately with the last event, returns null on first load
-  public obs$ = new BehaviorSubject(<sniffUrlInterface>null);
+  public readonly obs$ = new BehaviorSubject(<sniffUrlInterface>null);
 
   // listens from now on, will emit on the next event
-  public newObs$ = <Subject<sniffUrlInterface>> new Subject;
+  public readonly newObs$ = <Subject<sniffUrlInterface>> new Subject;
 
   private sniff():void {
     if (this.subscription) return;
-    this.subscription = this.router.events.subscribe((event:Object) => {
+    this.subscription = this.router.events.subscribe((event:Object):void => {
       if (event instanceof NavigationEnd) {
-        let url:UrlTree = this.router.parseUrl(event.url);
-        let segments = <Array<string>>[];
-        if (url.root.children.primary && url.root.children.primary.segments) {
-          segments = url.root.children.primary.segments.map((el:UrlSegment) => {
-            return el.path;
-          });
-        }
-        let obs:sniffUrlInterface = {
-          url: event.url,
-          route: '/' + segments.join('/'),
-          segments: segments,
-          queryParams: url.queryParams,
-          fragment: url.fragment
-        };
+        let obs = this.parse(event.url);
         this.obs$.next(obs);
         this.newObs$.next(obs);
       }
@@ -59,6 +46,32 @@ export class SniffurlService {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+  }
+
+  private parse(eventUrl:string):sniffUrlInterface {
+    // faster than router.parseUrl()
+    let url = eventUrl;
+    let fragment = url.split('#')[1] || null;
+    if (fragment) {
+      url = url.replace('#'+ fragment, '');
+    }
+    let queryParams:any = url.split('?')[1] || {};
+    if (queryParams[0]) {
+      url = url.replace('?'+ queryParams, '');
+      // faster than URLSearchParams
+      queryParams = JSON.parse('{"' + queryParams.replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+    }
+    let segments = url.split('/');
+    segments.shift();
+
+    let obs:sniffUrlInterface = {
+      url: eventUrl,
+      route: '/' + segments.join('/'),
+      segments: segments,
+      queryParams: queryParams,
+      fragment: fragment
+    };
+    return obs;
   }
 
 }

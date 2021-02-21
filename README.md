@@ -68,3 +68,6 @@ https://example.com/path/folder/?sort=2&orderby=1#asc
 ### Note
 1. Upon subscribing to obs$ you will immediately receive the last event. In case there is no previous event it will return null so you need to check for it.
 2. If you subscripe to newObs$ it will start listening from now on and will emit on the next event.
+3. You can use the getCurrentUrl method to get the current URL object without subscription;
+4. You can use the getHistoryBack to get the object of the page you are coming from.
+5. You can use the back method to get to the previous page without worrying you may route the visitor out of the site.
